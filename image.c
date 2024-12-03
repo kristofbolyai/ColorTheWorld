@@ -9,6 +9,16 @@
 
 #include "color.h"
 
+void error_and_free(FILE *file, const char *message, Color **data, const int height) {
+    fprintf(stderr, "%s", message);
+    for (int k = 0; k < height; k++) {
+        free(data[k]);
+    }
+    free(data);
+    fclose(file);
+    exit(1);
+}
+
 Image create_image_from_file(const char *filename) {
     FILE *file = fopen(filename, "r");
 
@@ -18,7 +28,11 @@ Image create_image_from_file(const char *filename) {
     }
 
     int width, height;
-    fscanf(file, "%d\n%d", &width, &height);
+    if (fscanf(file, "%d\n%d", &width, &height) != 2) {
+        fprintf(stderr, "Invalid file format\n");
+        fclose(file);
+        exit(1);
+    }
 
     if (width > MAX_SIZE || height > MAX_SIZE) {
         fprintf(stderr, "Width or height is too large. Maximum size is %d\n", MAX_SIZE);
@@ -34,13 +48,22 @@ Image create_image_from_file(const char *filename) {
     for (int i = 0; i < height; i++) {
         data[i] = (Color *) malloc(width * sizeof(Color));
         if (!data[i]) {
-            fprintf(stderr, "Could not allocate memory for image data\n");
+            error_and_free(file, "Could not allocate memory for image data\n", data, i);
             exit(1);
         }
 
         for (int j = 0; j < width; j++) {
             int color_int;
-            fscanf(file, "%d", &color_int);
+            if (fscanf(file, "%d", &color_int) != 1) {
+                error_and_free(file, "Invalid file format\n", data, i);
+                exit(1);
+            }
+
+            if (color_int < Reset || color_int > Bg_White) {
+                error_and_free(file, "Invalid color value\n", data, i);
+                exit(1);
+            }
+
             data[i][j] = (Color) color_int;
         }
     }
