@@ -18,6 +18,11 @@
 #define sleep() Sleep(SLEEP_MS)
 #endif
 
+#ifdef __APPLE__
+#include <unistd.h>
+#define sleep() usleep(SLEEP_MS * 1000)
+#endif
+
 Gif create_gif_from_file(const char *filename) {
     Gif gif;
     for (int i = 0; i < GIF_IMAGES; ++i) {
