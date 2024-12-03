@@ -5,6 +5,7 @@
 #include "gif.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define SLEEP_MS 1000
 
@@ -28,6 +29,20 @@ Gif create_gif_from_file(const char *filename) {
     for (int i = 0; i < GIF_IMAGES; ++i) {
         char current_filename[256];
         sprintf(current_filename, "%s%d", filename, i);
+
+        FILE *file = fopen(current_filename, "r");
+        if (file != NULL) {
+            fclose(file);
+        } else {
+            fprintf(stderr, "Could not open file %s\n", current_filename);
+
+            for (int j = 0; j < i; ++j) {
+                free_image(&gif.images[j]);
+            }
+
+            exit(1);
+        }
+
         gif.images[i] = create_image_from_file(current_filename);
     }
     return gif;

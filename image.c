@@ -12,7 +12,7 @@
 Image create_image_from_file(const char *filename) {
     FILE *file = fopen(filename, "r");
 
-    if (file == NULL) {
+    if (!file) {
         fprintf(stderr, "Could not open file %s\n", filename);
         exit(1);
     }
@@ -26,9 +26,18 @@ Image create_image_from_file(const char *filename) {
     }
 
     Color **data = malloc(height * sizeof(Color *));
+    if (!data) {
+        fprintf(stderr, "Could not allocate memory for image data\n");
+        exit(1);
+    }
 
     for (int i = 0; i < height; i++) {
         data[i] = (Color *) malloc(width * sizeof(Color));
+        if (!data[i]) {
+            fprintf(stderr, "Could not allocate memory for image data\n");
+            exit(1);
+        }
+
         for (int j = 0; j < width; j++) {
             int color_int;
             fscanf(file, "%d", &color_int);
