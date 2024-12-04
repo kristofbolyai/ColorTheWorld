@@ -16,7 +16,6 @@
 #define BG_WHITE "\033[47m"
 
 typedef enum {
-    Reset,
     Bg_Black,
     Bg_Red,
     Bg_Green,
@@ -24,7 +23,8 @@ typedef enum {
     Bg_Blue,
     Bg_Magenta,
     Bg_Cyan,
-    Bg_White
+    Bg_White,
+    Reset
 } Color;
 
 char *color_to_string(Color);

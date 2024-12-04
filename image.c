@@ -59,7 +59,7 @@ Image create_image_from_file(const char *filename) {
                 exit(1);
             }
 
-            if (color_int < Reset || color_int > Bg_White) {
+            if (color_int > Reset || color_int < Bg_Black) {
                 error_and_free(file, "Invalid color value\n", data, i);
                 exit(1);
             }
